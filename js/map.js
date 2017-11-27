@@ -13,9 +13,9 @@ var guestsCount = 40;
 var pinHalfWidth = 20;
 var pinHeight = 62;
 var minX = 300 + pinHalfWidth;
-var maxX = 900;
-var minY = (100 + pinHeight);
-var maxY = 500;
+var maxX = 900 - pinHalfWidth;
+var minY = 100 + pinHeight;
+var maxY = 500 - pinHeight;
 
 var titles = [
   'Большая уютная квартира',
@@ -100,13 +100,13 @@ var getRandomFeaturesLength = function () {
 
 // получение случайного x
 var getX = function (min, max) {
-  var x = Math.floor(Math.random() * (max - min) + min) - pinHalfWidth;
+  var x = Math.floor(Math.random() * (max - min) + min);
   return x;
 };
 
 // получение случайного y
 var getY = function (min, max) {
-  var y = Math.floor(Math.random() * (max - min) + min) - pinHeight;
+  var y = Math.floor(Math.random() * (max - min) + min);
   return y;
 };
 
