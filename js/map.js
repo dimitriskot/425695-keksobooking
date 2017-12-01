@@ -7,16 +7,14 @@ var similarMapPinTemplate = document.querySelector('template').content.querySele
 var similarArticleTemplate = document.querySelector('template').content.querySelector('.map__card');
 var ads = [];
 var adsCount = 8;
-var minPrice = 1000;
-var maxPrice = 1000000;
-var roomsCount = 5;
-var guestsCount = 10;
-var pinHalfWidth = 20;
-var pinHeight = 62;
-var minX = 300 + pinHalfWidth;
-var maxX = 900 - pinHalfWidth;
-var minY = 100 + pinHeight;
-var maxY = 500 - pinHeight;
+var MIN_PRICE = 1000;
+var MAX_PRICE = 1000000;
+var PIN_HALF_WIDTH = 20;
+var PIN_HEIGHT = 62;
+var MIN_X = 300 + PIN_HALF_WIDTH;
+var MAX_X = 900 - PIN_HALF_WIDTH;
+var MIN_Y = 100 + PIN_HEIGHT;
+var MAX_Y = 500 - PIN_HEIGHT;
 
 var titles = [
   'Большая уютная квартира',
@@ -59,11 +57,7 @@ var featuresList = [
 // получение пути к файлу с аватаркой
 var getAvatarPath = function (userNumber) {
   var avatarPath = '';
-  if (userNumber < 10) {
-    avatarPath = 'img/avatars/user0' + userNumber + '.png';
-  } else {
-    avatarPath = 'img/avatars/user' + userNumber + '.png';
-  }
+  avatarPath = userNumber < 10 ? 'img/avatars/user0' + userNumber + '.png' : 'img/avatars/user' + userNumber + '.png';
   return avatarPath;
 };
 
@@ -76,20 +70,20 @@ var getAvatar = function (number) {
 
 // получение ad.author
 var getAuthor = function (number) {
-  var author = {};
-  author.avatar = getAvatar(number);
-  return author;
+  return {
+    avatar: getAvatar(number)
+  };
 };
 
-// получение случайного заголовка из массива
-var getRandomTitle = function () {
-  var randomTitle = titles[Math.floor(Math.random() * titles.length)];
-  return randomTitle;
+// получение случайного элемента массива
+var getRandomElement = function (array) {
+  var randomElement = array[Math.floor(Math.random() * array.length)];
+  return randomElement;
 };
 
 // получение случайной характеристики из массива
 var getRandomFeatureItem = function () {
-  var randomFeatureItem = featuresList[Math.floor(Math.random() * featuresList.length)];
+  var randomFeatureItem = getRandomElement(featuresList);
   return randomFeatureItem;
 };
 
@@ -99,23 +93,23 @@ var getRandomFeaturesLength = function () {
   return randomFeaturesLength;
 };
 
-// получение случайного x
-var getX = function (min, max) {
-  var x = Math.floor(Math.random() * (max - min) + min);
-  return x;
+// получение случайного числа
+var getRandomNumber = function (count) {
+  var number = Math.ceil(Math.random() * count);
+  return number;
 };
 
-// получение случайного y
-var getY = function (min, max) {
-  var y = Math.floor(Math.random() * (max - min) + min);
-  return y;
+// получение случайного числа из диапазона
+var getRandomNumberFromRange = function (min, max) {
+  var number = Math.floor(Math.random() * (max - min) + min);
+  return number;
 };
 
 // получение случайной координаты
 var getRandomLocation = function () {
   var randomLocation = {};
-  randomLocation.x = getX(minX, maxX);
-  randomLocation.y = getY(minY, maxY);
+  randomLocation.x = getRandomNumberFromRange(MIN_X, MAX_X);
+  randomLocation.y = getRandomNumberFromRange(MIN_Y, MAX_Y);
   return randomLocation;
 };
 
@@ -135,83 +129,44 @@ var tempLocations = getLocations(adsCount);
 
 // получение offer.title
 var getTitle = function (number) {
-  var tempTitles = [];
-  var tempTitle;
-  for (var i = 0; tempTitles.length !== titles.length; i++) {
-    tempTitle = getRandomTitle();
-    if (tempTitles.indexOf(tempTitle) === -1) {
-      tempTitles[i] = tempTitle;
-    } else {
-      i -= 1;
-    }
+  var tempTitles = titles.slice();
+  function compareRandom() {
+    return Math.random() - 0.5;
   }
+  tempTitles.sort(compareRandom);
   return tempTitles[number];
-};
-
-// получение offer.price
-var getPrice = function (min, max) {
-  var price = Math.floor(Math.random() * (max - min) + min);
-  return price;
 };
 
 // получение offer.type
 var getType = function () {
-  var type = types[Math.floor(Math.random() * types.length)];
+  var type = getRandomElement(types);
   return type;
-};
-
-// получение offer.rooms
-var getRooms = function (count) {
-  var rooms = Math.ceil(Math.random() * count);
-  return rooms;
-};
-
-// получение offer.guests
-var getGuests = function (count) {
-  var guests = Math.ceil(Math.random() * count);
-  return guests;
-};
-
-// получение offer.checkin
-var getCheckin = function () {
-  var checkin = checkinTimes[Math.floor(Math.random() * checkinTimes.length)];
-  return checkin;
-};
-
-// получение offer.checkout
-var getcheckout = function () {
-  var checkout = checkoutTimes[Math.floor(Math.random() * checkoutTimes.length)];
-  return checkout;
 };
 
 // получение offer.features
 var getFeatures = function () {
-  var tempFeatures = [];
-  var features = [];
-  tempFeatures.length = getRandomFeaturesLength();
-  var feature;
-  for (var i = 0; features.length !== tempFeatures.length; i++) {
-    feature = getRandomFeatureItem();
-    if (features.indexOf(feature) === -1) {
-      features[i] = feature;
-    } else {
-      i -= 1;
-    }
+  var features = featuresList.slice();
+  function compareRandom() {
+    return Math.random() - 0.5;
   }
+  features.sort(compareRandom);
+  features.length = getRandomFeaturesLength();
   return features;
 };
 
 // получение offer
 var getOffer = function (number) {
+  var roomsCount = 5;
+  var guestsCount = 10;
   var offer = {};
   offer.title = getTitle(number);
   offer.address = String(tempLocations[number].x) + ', ' + String(tempLocations[number].y);
-  offer.price = getPrice(minPrice, maxPrice);
+  offer.price = getRandomNumberFromRange(MIN_PRICE, MAX_PRICE);
   offer.type = getType();
-  offer.rooms = getRooms(roomsCount);
-  offer.guests = getGuests(guestsCount);
-  offer.checkin = getCheckin();
-  offer.checkout = getcheckout();
+  offer.rooms = getRandomNumber(roomsCount);
+  offer.guests = getRandomNumber(guestsCount);
+  offer.checkin = getRandomElement(checkinTimes);
+  offer.checkout = getRandomElement(checkoutTimes);
   offer.features = getFeatures();
   offer.description = '';
   offer.photos = [];
@@ -270,10 +225,10 @@ var renderArticle = function (adNumber) {
   }
   article.querySelector('h4 + p').textContent = adNumber.offer.rooms + ' для ' + adNumber.offer.guests + ' гостей';
   article.querySelector('h4 + p + p').textContent = 'Заезд после ' + adNumber.offer.checkin + ', выезд до ' + adNumber.offer.checkout;
-  for (var i = 0; i < adNumber.offer.features.length; i++) {
+  for (var j = 0; j < adNumber.offer.features.length; j++) {
     var item = document.createElement('li');
     item.className = 'feature';
-    item.classList.add('feature--' + adNumber.offer.features[i]);
+    item.classList.add('feature--' + adNumber.offer.features[j]);
     fragment.appendChild(item);
     article.querySelector('.popup__features').appendChild(fragment);
   }
