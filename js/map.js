@@ -81,12 +81,6 @@ var getRandomElement = function (array) {
   return randomElement;
 };
 
-// получение случайной характеристики из массива
-var getRandomFeatureItem = function () {
-  var randomFeatureItem = getRandomElement(featuresList);
-  return randomFeatureItem;
-};
-
 // получение случайной длины массива характеристик
 var getRandomFeaturesLength = function () {
   var randomFeaturesLength = Math.ceil(Math.random() * featuresList.length);
