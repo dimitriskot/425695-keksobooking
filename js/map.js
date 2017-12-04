@@ -56,8 +56,8 @@ var featuresList = [
 
 // получение пути к файлу с аватаркой
 var getAvatarPath = function (userNumber) {
-  var avatarPath = '';
-  avatarPath = userNumber < 10 ? 'img/avatars/user0' + userNumber + '.png' : 'img/avatars/user' + userNumber + '.png';
+  var avatarPath = 'img/avatars/user';
+  avatarPath += (userNumber < 10 ? '0' : '') + userNumber + '.png';
   return avatarPath;
 };
 
@@ -107,20 +107,6 @@ var getRandomLocation = function () {
   return randomLocation;
 };
 
-// получение массива случайных координат
-var getLocations = function (count) {
-  var locations = [];
-  var location;
-  for (var i = 0; locations.length < count; i++) {
-    location = getRandomLocation();
-    locations[i] = location;
-  }
-  return locations;
-};
-
-// вызов массива случайных координат
-var tempLocations = getLocations(adsCount);
-
 // получение offer.title
 var getTitle = function (number) {
   var tempTitles = titles.slice();
@@ -149,12 +135,12 @@ var getFeatures = function () {
 };
 
 // получение offer
-var getOffer = function (number) {
+var getOffer = function (number, location) {
   var roomsCount = 5;
   var guestsCount = 10;
   var offer = {};
   offer.title = getTitle(number);
-  offer.address = String(tempLocations[number].x) + ', ' + String(tempLocations[number].y);
+  offer.address = location.x + ', ' + location.y;
   offer.price = getRandomNumberFromRange(MIN_PRICE, MAX_PRICE);
   offer.type = getType();
   offer.rooms = getRandomNumber(roomsCount);
@@ -170,9 +156,10 @@ var getOffer = function (number) {
 // создание объявления
 var getAd = function (number) {
   var ad = {};
+  var tempLocation = getRandomLocation();
   ad.author = getAuthor(number);
-  ad.offer = getOffer(number);
-  ad.location = tempLocations[number];
+  ad.offer = getOffer(number, tempLocation);
+  ad.location = tempLocation;
   return ad;
 };
 
