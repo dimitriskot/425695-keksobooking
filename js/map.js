@@ -1,7 +1,9 @@
 'use strict';
 
 var map = document.querySelector('.map');
-map.classList.remove('map--faded');
+var mapPin = map.querySelector('.map__pin--main');
+var noticeForm = document.querySelector('.notice__form');
+// map.classList.remove('map--faded');
 var similarMapPinElement = map.querySelector('.map__pins');
 var similarMapPinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 var similarArticleTemplate = document.querySelector('template').content.querySelector('.map__card');
@@ -187,11 +189,12 @@ var renderMapPin = function (ad) {
 };
 
 var fragment = document.createDocumentFragment();
-for (var i = 0; i < ads.length; i++) {
-  fragment.appendChild(renderMapPin(ads[i]));
-}
-
-similarMapPinElement.appendChild(fragment);
+var createPins = function () {
+  for (var i = 0; i < ads.length; i++) {
+    fragment.appendChild(renderMapPin(ads[i]));
+  }
+  similarMapPinElement.appendChild(fragment);
+};
 
 var popup = similarArticleTemplate.querySelector('.popup__features');
 while (popup.firstChild) {
@@ -219,5 +222,16 @@ var renderArticle = function (adNumber) {
   return article;
 };
 
-fragment.appendChild(renderArticle(ads[0]));
-map.appendChild(fragment);
+var createArticle = function () {
+  fragment.appendChild(renderArticle(ads[0]));
+  map.appendChild(fragment);
+};
+
+var activateEdit = function () {
+  map.classList.remove('map--faded');
+  noticeForm.classList.remove('notice__form--disabled');
+  createPins();
+  createArticle();
+};
+
+mapPin.addEventListener('mouseup', activateEdit);
