@@ -1,7 +1,8 @@
 'use strict';
 
 var map = document.querySelector('.map');
-map.classList.remove('map--faded');
+var mapPinMain = map.querySelector('.map__pin--main');
+var noticeForm = document.querySelector('.notice__form');
 var similarMapPinElement = map.querySelector('.map__pins');
 var similarMapPinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 var similarArticleTemplate = document.querySelector('template').content.querySelector('.map__card');
@@ -15,6 +16,8 @@ var MIN_X = 300 + PIN_HALF_WIDTH;
 var MAX_X = 900 - PIN_HALF_WIDTH;
 var MIN_Y = 100 + PIN_HEIGHT;
 var MAX_Y = 500 - PIN_HEIGHT;
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
 
 var titles = [
   'Большая уютная квартира',
@@ -178,27 +181,35 @@ var getAds = function (count) {
 };
 getAds(adsCount);
 
-var renderMapPin = function (ad) {
+// генерация метки
+var renderMapPin = function (ad, number) {
   var mapPinElement = similarMapPinTemplate.cloneNode(true);
   mapPinElement.style.top = ad.location.y + 'px';
   mapPinElement.style.left = ad.location.x + 'px';
+  mapPinElement.id = 'pin-' + number;
   mapPinElement.querySelector('img').src = ad.author.avatar;
   return mapPinElement;
 };
 
 var fragment = document.createDocumentFragment();
-for (var i = 0; i < ads.length; i++) {
-  fragment.appendChild(renderMapPin(ads[i]));
+
+var pins = [];
+
+// генерация меток объявлений
+var createPins = function (array) {
+  for (var i = 0; i < ads.length; i++) {
+    array[i] = fragment.appendChild(renderMapPin(ads[i], i));
+  }
+  similarMapPinElement.appendChild(fragment);
+};
+
+// очистка features в шаблоне
+var features = similarArticleTemplate.querySelector('.popup__features');
+while (features.firstChild) {
+  features.removeChild(features.firstChild);
 }
 
-similarMapPinElement.appendChild(fragment);
-
-var popup = similarArticleTemplate.querySelector('.popup__features');
-while (popup.firstChild) {
-  popup.removeChild(popup.firstChild);
-}
-
-var renderArticle = function (adNumber) {
+var renderPopup = function (adNumber) {
   var article = similarArticleTemplate.cloneNode(true);
   article.querySelector('h3').textContent = adNumber.offer.title;
   article.querySelector('small').textContent = adNumber.offer.address;
@@ -219,5 +230,54 @@ var renderArticle = function (adNumber) {
   return article;
 };
 
-fragment.appendChild(renderArticle(ads[0]));
-map.appendChild(fragment);
+var createPopup = function (number) {
+  fragment.appendChild(renderPopup(ads[number]));
+  map.appendChild(fragment);
+  var closePopupButton = map.querySelector('.popup__close');
+  closePopupButton.addEventListener('click', closeCurrentAd);
+  closePopupButton.stopPropagation();
+};
+
+var activateEdit = function () {
+  map.classList.remove('map--faded');
+  noticeForm.classList.remove('notice__form--disabled');
+  createPins(pins);
+};
+
+mapPinMain.addEventListener('mouseup', activateEdit);
+
+var deactivatePin = function () {
+  if (document.querySelector('.map__pin--active')) {
+    var pinActive = document.querySelector('.map__pin--active');
+    pinActive.classList.remove('map__pin--active');
+  }
+};
+
+var closePopup = function () {
+  if (document.querySelector('.map__card')) {
+    var mapCard = document.querySelector('.map__card');
+    map.removeChild(mapCard);
+  }
+};
+
+var closeCurrentAd = function () {
+  closePopup();
+  deactivatePin();
+};
+
+var openPopup = function (event) {
+  var target = event.target;
+  var pinId;
+  while (target !== map) {
+    if (target.className === 'map__pin') {
+      closeCurrentAd();
+      target.classList.add('map__pin--active');
+      pinId = target.id.replace('pin-', '');
+      createPopup(pinId);
+      return;
+    }
+    target = target.parentNode;
+  }
+};
+
+map.addEventListener('click', openPopup);
