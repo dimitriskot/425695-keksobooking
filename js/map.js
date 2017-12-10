@@ -255,8 +255,8 @@ var deactivatePin = function () {
 
 var closePopup = function () {
   if (document.querySelector('.map__card')) {
-    var mapPopup = document.querySelector('.map__card');
-    map.removeChild(mapPopup);
+    var mapCard = document.querySelector('.map__card');
+    map.removeChild(mapCard);
   }
 };
 
