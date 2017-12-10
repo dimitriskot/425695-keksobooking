@@ -199,6 +199,11 @@ var pins = [];
 var createPins = function (array) {
   for (var i = 0; i < ads.length; i++) {
     array[i] = fragment.appendChild(renderMapPin(ads[i], i));
+    array[i].addEventListener('keydown', function (event) {
+      if (event.keyCode === ENTER_KEYCODE) {
+        openPopup();
+      }
+    });
   }
   similarMapPinElement.appendChild(fragment);
 };
@@ -230,12 +235,18 @@ var renderPopup = function (adNumber) {
   return article;
 };
 
-var createPopup = function (number) {
+var createPopup = function (number, event) {
   fragment.appendChild(renderPopup(ads[number]));
   map.appendChild(fragment);
   var closePopupButton = map.querySelector('.popup__close');
   closePopupButton.addEventListener('click', closeCurrentAd);
-  closePopupButton.stopPropagation();
+  closePopupButton.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      closeCurrentAd();
+    }
+  });
+  event.stopPropagation();
+  debugger;
 };
 
 var activateEdit = function () {
@@ -245,6 +256,12 @@ var activateEdit = function () {
 };
 
 mapPinMain.addEventListener('mouseup', activateEdit);
+
+mapPinMain.addEventListener('keydown', function (event) {
+  if (event.keyCode === ENTER_KEYCODE) {
+    activateEdit();
+  }
+});
 
 var deactivatePin = function () {
   if (document.querySelector('.map__pin--active')) {
@@ -260,14 +277,22 @@ var closePopup = function () {
   }
 };
 
+var checkKey = function (event) {
+  if (event.keyCode === ESC_KEYCODE) {
+    closeCurrentAd();
+  }
+};
+
 var closeCurrentAd = function () {
   closePopup();
   deactivatePin();
+  document.removeEventListener('keydown', checkKey);
 };
 
 var openPopup = function (event) {
   var target = event.target;
   var pinId;
+  map.addEventListener('keydown', checkKey);
   while (target !== map) {
     if (target.className === 'map__pin') {
       closeCurrentAd();
