@@ -277,7 +277,7 @@ var closePopup = function () {
 
 var checkKey = function (event) {
   if (event.keyCode === ESC_KEYCODE) {
-    closeCurrentAd();
+    closeCurrentAd(event);
   }
 };
 
