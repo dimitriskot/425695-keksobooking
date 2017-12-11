@@ -244,9 +244,8 @@ var createPopup = function (number, event) {
     if (evt.keyCode === ENTER_KEYCODE) {
       closeCurrentAd();
     }
+    event.stopPropagation();
   });
-  event.stopPropagation();
-  debugger;
 };
 
 var activateEdit = function () {
@@ -298,7 +297,7 @@ var openPopup = function (event) {
       closeCurrentAd();
       target.classList.add('map__pin--active');
       pinId = target.id.replace('pin-', '');
-      createPopup(pinId);
+      createPopup(pinId, event);
       return;
     }
     target = target.parentNode;
