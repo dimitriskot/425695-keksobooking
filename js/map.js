@@ -235,12 +235,11 @@ var renderPopup = function (adNumber) {
   return article;
 };
 
-var createPopup = function (number, event) {
+var createPopup = function (number) {
   fragment.appendChild(renderPopup(ads[number]));
   map.appendChild(fragment);
   var closePopupButton = map.querySelector('.popup__close');
   closePopupButton.addEventListener('click', closeCurrentAd);
-  event.stopPropagation();
   closePopupButton.addEventListener('keydown', function (evt) {
     if (evt.keyCode === ENTER_KEYCODE) {
       closeCurrentAd();
@@ -282,19 +281,21 @@ var checkKey = function (event) {
   }
 };
 
-var closeCurrentAd = function () {
+var closeCurrentAd = function (event) {
   closePopup();
   deactivatePin();
   document.removeEventListener('keydown', checkKey);
+  event.stopPropagation();
 };
 
 var openPopup = function (event) {
   var target = event.target;
   var pinId;
-  map.addEventListener('keydown', checkKey);
+  document.addEventListener('keydown', checkKey);
   while (target !== map) {
     if (target.className === 'map__pin') {
-      closeCurrentAd();
+      closePopup();
+      deactivatePin();
       target.classList.add('map__pin--active');
       pinId = target.id.replace('pin-', '');
       createPopup(pinId, event);
