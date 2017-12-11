@@ -240,11 +240,11 @@ var createPopup = function (number, event) {
   map.appendChild(fragment);
   var closePopupButton = map.querySelector('.popup__close');
   closePopupButton.addEventListener('click', closeCurrentAd);
+  event.stopPropagation();
   closePopupButton.addEventListener('keydown', function (evt) {
     if (evt.keyCode === ENTER_KEYCODE) {
       closeCurrentAd();
     }
-    event.stopPropagation();
   });
 };
 
