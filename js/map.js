@@ -3,10 +3,10 @@
 var map = document.querySelector('.map');
 var mapPinMain = map.querySelector('.map__pin--main');
 var noticeForm = document.querySelector('.notice__form');
-var similarMapPinElement = map.querySelector('.map__pins');
-var similarMapPinTemplate = document.querySelector('template').content.querySelector('.map__pin');
-var similarArticleTemplate = document.querySelector('template').content.querySelector('.map__card');
-var ads = [];
+var mapPinSet = map.querySelector('.map__pins');
+var mapPinTemplate = document.querySelector('template').content.querySelector('.map__pin');
+var articleTemplate = document.querySelector('template').content.querySelector('.map__card');
+var fragment = document.createDocumentFragment();
 var adsCount = 8;
 var MIN_PRICE = 1000;
 var MAX_PRICE = 1000000;
@@ -174,16 +174,19 @@ var getAd = function (number) {
 
 // получение массива объявлений
 var getAds = function (count) {
+  var adsArray = [];
   for (var i = 0; i < count; i++) {
-    ads[i] = getAd(i, count);
+    adsArray[i] = getAd(i, count);
   }
-  return ads;
+  return adsArray;
 };
-getAds(adsCount);
+
+// создание массива объявлений
+var ads = getAds(adsCount);
 
 // генерация метки
 var renderMapPin = function (ad, number) {
-  var mapPinElement = similarMapPinTemplate.cloneNode(true);
+  var mapPinElement = mapPinTemplate.cloneNode(true);
   mapPinElement.style.top = ad.location.y + 'px';
   mapPinElement.style.left = ad.location.x + 'px';
   mapPinElement.id = 'pin-' + number;
@@ -191,31 +194,17 @@ var renderMapPin = function (ad, number) {
   return mapPinElement;
 };
 
-var fragment = document.createDocumentFragment();
-
-var pins = [];
-
-// генерация меток объявлений
-var createPins = function (array) {
-  for (var i = 0; i < ads.length; i++) {
-    array[i] = fragment.appendChild(renderMapPin(ads[i], i));
-    array[i].addEventListener('keydown', function (event) {
-      if (event.keyCode === ENTER_KEYCODE) {
-        openPopup();
-      }
-    });
+// очистка features в шаблоне
+var clearFeatures = function () {
+  var features = articleTemplate.querySelector('.popup__features');
+  while (features.firstChild) {
+    features.removeChild(features.firstChild);
   }
-  similarMapPinElement.appendChild(fragment);
 };
 
-// очистка features в шаблоне
-var features = similarArticleTemplate.querySelector('.popup__features');
-while (features.firstChild) {
-  features.removeChild(features.firstChild);
-}
-
+// генерация информации об объявлении
 var renderPopup = function (adNumber) {
-  var article = similarArticleTemplate.cloneNode(true);
+  var article = articleTemplate.cloneNode(true);
   article.querySelector('h3').textContent = adNumber.offer.title;
   article.querySelector('small').textContent = adNumber.offer.address;
   article.querySelector('.popup__price').textContent = adNumber.offer.price + String.fromCharCode(8381) + '/ночь';
@@ -223,6 +212,7 @@ var renderPopup = function (adNumber) {
   var typeInfo = adNumber.offer.rooms + ' для ' + adNumber.offer.guests;
   article.querySelector('.popup__type-info').textContent = (adNumber.offer.guests === 1) ? typeInfo + ' гостя' : typeInfo + ' гостей';
   article.querySelector('.popup__check').textContent = 'Заезд после ' + adNumber.offer.checkin + ', выезд до ' + adNumber.offer.checkout;
+  clearFeatures();
   for (var j = 0; j < adNumber.offer.features.length; j++) {
     var item = document.createElement('li');
     item.className = 'feature';
@@ -235,32 +225,54 @@ var renderPopup = function (adNumber) {
   return article;
 };
 
+// создание информации об объявлении
 var createPopup = function (number) {
   fragment.appendChild(renderPopup(ads[number]));
   map.appendChild(fragment);
+  // создание события закрытия окна информации по клику и по нажатию на Enter
   var closePopupButton = map.querySelector('.popup__close');
   closePopupButton.addEventListener('click', closeCurrentAd);
   closePopupButton.addEventListener('keydown', function (evt) {
     if (evt.keyCode === ENTER_KEYCODE) {
-      closeCurrentAd();
+      closeCurrentAd(event);
     }
   });
 };
 
+// создание меток объявлений
+var createPins = function (array) {
+  var pins = [];
+  for (var i = 0; i < array.length; i++) {
+    pins[i] = fragment.appendChild(renderMapPin(ads[i], i));
+  }
+  mapPinSet.appendChild(fragment);
+};
+
+// функция активации редактора объявления
 var activateEdit = function () {
   map.classList.remove('map--faded');
   noticeForm.classList.remove('notice__form--disabled');
-  createPins(pins);
+  createPins(ads);
 };
 
+// событие активации редактора объявления по клику
 mapPinMain.addEventListener('mouseup', activateEdit);
 
+// событие активации редактора объявления по нажатию Enter
 mapPinMain.addEventListener('keydown', function (event) {
   if (event.keyCode === ENTER_KEYCODE) {
     activateEdit();
   }
 });
 
+// проверка нажатия клавиши Esc
+var checkKey = function (event) {
+  if (event.keyCode === ESC_KEYCODE) {
+    closeCurrentAd(event);
+  }
+};
+
+// удаление класса ..--active у метки
 var deactivatePin = function () {
   if (document.querySelector('.map__pin--active')) {
     var pinActive = document.querySelector('.map__pin--active');
@@ -268,6 +280,7 @@ var deactivatePin = function () {
   }
 };
 
+// удаление информации об объявлении
 var closePopup = function () {
   if (document.querySelector('.map__card')) {
     var mapCard = document.querySelector('.map__card');
@@ -275,12 +288,7 @@ var closePopup = function () {
   }
 };
 
-var checkKey = function (event) {
-  if (event.keyCode === ESC_KEYCODE) {
-    closeCurrentAd(event);
-  }
-};
-
+// закрытие текущей информации об объявлении
 var closeCurrentAd = function (event) {
   closePopup();
   deactivatePin();
@@ -288,6 +296,7 @@ var closeCurrentAd = function (event) {
   event.stopPropagation();
 };
 
+// открытие информации об объявлении
 var openPopup = function (event) {
   var target = event.target;
   var pinId;
@@ -305,4 +314,12 @@ var openPopup = function (event) {
   }
 };
 
+// событие открытия информации об объявлении по клику
 map.addEventListener('click', openPopup);
+
+// событие открытия информации об объявлении по нажатию Enter
+map.addEventListener('keydown', function (event) {
+  if (event.keyCode === ENTER_KEYCODE) {
+    openPopup(event);
+  }
+});
