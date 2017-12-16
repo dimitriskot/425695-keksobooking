@@ -2,6 +2,8 @@
 
 (function () {
   var noticeForm = document.querySelector('.notice__form');
+  var MAIN_PIN_HALF_WIDTH = 31;
+  var MAIN_PIN_HEIGHT = 82;
 
   var minPricesForType = {
     bungalo: 0,
@@ -96,7 +98,18 @@
     }
   };
 
+  var getFormAddress = function (coords) {
+    var formAddress = noticeForm.querySelector('#address');
+    var pinX = coords.x + MAIN_PIN_HALF_WIDTH;
+    var pinY = coords.y + MAIN_PIN_HEIGHT;
+    formAddress.value = pinX + ', ' + pinY;
+  };
+
   noticeForm.addEventListener('change', checkTime);
   noticeForm.addEventListener('change', getMinPrice);
   noticeForm.addEventListener('change', checkRoomNumber);
+
+  window.form = {
+    getFormAddress: getFormAddress
+  };
 })();
