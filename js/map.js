@@ -126,6 +126,7 @@ var getRandomLocation = function () {
 // получение offer.title
 var getTitle = function (number) {
   var tempTitles = titles.slice();
+
   function compareRandom() {
     return Math.random() - 0.5;
   }
@@ -142,6 +143,7 @@ var getType = function () {
 // получение offer.features
 var getFeatures = function () {
   var features = featuresList.slice();
+
   function compareRandom() {
     return Math.random() - 0.5;
   }
@@ -339,7 +341,7 @@ var syncTime = function (firstValue, secondValue) {
     if (firstTimes[i].selected) {
       var timeValue = firstTimes[i].value;
       for (var j = 0; j < secondTimes.length; j++) {
-        if (timeValue === secondTimes[j].value) {
+        if (secondTimes[j].value === timeValue) {
           secondTimes[j].selected = true;
         }
       }
@@ -352,25 +354,44 @@ var checkTime = function (event) {
   var timeIn = noticeForm.querySelector('#timein');
   var timeOut = noticeForm.querySelector('#timeout');
   var firstTime = event.target;
-  var secondTime;
-  if (firstTime === timeIn) {
-    secondTime = timeOut;
-  } else {
-    secondTime = timeIn;
-  }
+  var secondTime = (firstTime === timeIn) ? timeOut : timeIn;
   syncTime(firstTime, secondTime);
 };
 
 // синхронизация типа жилья с минимальной ценой
 var getMinPrice = function () {
   var type = noticeForm.querySelector('#type');
-  var types = type.children;
+  var formTypes = type.children;
   var price = noticeForm.querySelector('#price');
-  for (var i = 0; i < types.length; i++) {
-    if (types[i].selected) {
-      var typeValue = types[i].value;
+  for (var i = 0; i < formTypes.length; i++) {
+    if (formTypes[i].selected) {
+      var typeValue = formTypes[i].value;
       price.min = minPricesForType[typeValue];
-      price.placeholder = minPricesForType[typeValue];
+      price.placeholder = price.min;
+    }
+  }
+};
+
+var disableCapacity = function (roomValue) {
+  var capacity = noticeForm.querySelector('#capacity');
+  var capacities = capacity.children;
+  if (roomValue !== '100') {
+    for (var i = 0; i < capacities.length; i++) {
+      if (capacities[i].value > roomValue || capacities[i].value === '0') {
+        capacities[i].disabled = true;
+        capacities[i].selected = false;
+      } else {
+        capacities[i].disabled = false;
+      }
+    }
+  } else {
+    for (var j = 0; j < capacities.length; j++) {
+      if (capacities[j].value !== '0') {
+        capacities[j].disabled = true;
+      } else {
+        capacities[j].disabled = false;
+        capacities[j].selected = true;
+      }
     }
   }
 };
@@ -379,43 +400,25 @@ var getMinPrice = function () {
 var checkRoomNumber = function () {
   var roomNumber = noticeForm.querySelector('#room_number');
   var roomNumbers = roomNumber.children;
-  var capacity = noticeForm.querySelector('#capacity');
-  var capacities = capacity.children;
   for (var i = 0; i < roomNumbers.length; i++) {
     if (roomNumbers[i].selected) {
       if (roomNumbers[i].value === '1') {
-        capacities[2].selected = true;
-        capacities[0].disabled = true;
-        capacities[1].disabled = true;
-        capacities[2].disabled = false;
-        capacities[3].disabled = true;
+        disableCapacity(roomNumbers[i].value);
         break;
       }
       if (roomNumbers[i].value === '2') {
-        capacities[0].disabled = true;
-        capacities[1].disabled = false;
-        capacities[2].disabled = false;
-        capacities[3].disabled = true;
+        disableCapacity(roomNumbers[i].value);
         break;
       }
       if (roomNumbers[i].value === '3') {
-        capacities[0].disabled = false;
-        capacities[1].disabled = false;
-        capacities[2].disabled = false;
-        capacities[3].disabled = true;
+        disableCapacity(roomNumbers[i].value);
         break;
       }
-      if (roomNumbers[i].value === '100') {
-        capacities[0].disabled = true;
-        capacities[1].disabled = true;
-        capacities[2].disabled = true;
-        capacities[3].disabled = false;
-        capacities[3].selected = true;
-      }
+      disableCapacity(roomNumbers[i].value);
     }
   }
 };
 
-noticeForm.addEventListener('click', checkTime);
-noticeForm.addEventListener('click', getMinPrice);
-noticeForm.addEventListener('click', checkRoomNumber);
+noticeForm.addEventListener('change', checkTime);
+noticeForm.addEventListener('change', getMinPrice);
+noticeForm.addEventListener('change', checkRoomNumber);
