@@ -42,6 +42,13 @@ var dictTypes = {
   bungalo: 'Бунгало'
 };
 
+var minPricesForType = {
+  bungalo: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000
+};
+
 var checkinTimes = [
   '12:00',
   '13:00',
@@ -323,3 +330,92 @@ map.addEventListener('keydown', function (event) {
     openPopup(event);
   }
 });
+
+// синхронизация времён заезда/выезда
+var syncTime = function (firstValue, secondValue) {
+  var firstTimes = firstValue.children;
+  var secondTimes = secondValue.children;
+  for (var i = 0; i < firstTimes.length; i++) {
+    if (firstTimes[i].selected) {
+      var timeValue = firstTimes[i].value;
+      for (var j = 0; j < secondTimes.length; j++) {
+        if (timeValue === secondTimes[j].value) {
+          secondTimes[j].selected = true;
+        }
+      }
+    }
+  }
+};
+
+// проверка клика мышкой по полю заезда/выезда
+var checkTime = function (event) {
+  var timeIn = noticeForm.querySelector('#timein');
+  var timeOut = noticeForm.querySelector('#timeout');
+  var firstTime = event.target;
+  var secondTime;
+  if (firstTime === timeIn) {
+    secondTime = timeOut;
+  } else {
+    secondTime = timeIn;
+  }
+  syncTime(firstTime, secondTime);
+};
+
+// синхронизация типа жилья с минимальной ценой
+var getMinPrice = function () {
+  var type = noticeForm.querySelector('#type');
+  var types = type.children;
+  var price = noticeForm.querySelector('#price');
+  for (var i = 0; i < types.length; i++) {
+    if (types[i].selected) {
+      var typeValue = types[i].value;
+      price.min = minPricesForType[typeValue];
+      price.placeholder = minPricesForType[typeValue];
+    }
+  }
+};
+
+// связка количества комнат с количеством гостей
+var checkRoomNumber = function () {
+  var roomNumber = noticeForm.querySelector('#room_number');
+  var roomNumbers = roomNumber.children;
+  var capacity = noticeForm.querySelector('#capacity');
+  var capacities = capacity.children;
+  for (var i = 0; i < roomNumbers.length; i++) {
+    if (roomNumbers[i].selected) {
+      if (roomNumbers[i].value === '1') {
+        capacities[2].selected = true;
+        capacities[0].disabled = true;
+        capacities[1].disabled = true;
+        capacities[2].disabled = false;
+        capacities[3].disabled = true;
+        break;
+      }
+      if (roomNumbers[i].value === '2') {
+        capacities[0].disabled = true;
+        capacities[1].disabled = false;
+        capacities[2].disabled = false;
+        capacities[3].disabled = true;
+        break;
+      }
+      if (roomNumbers[i].value === '3') {
+        capacities[0].disabled = false;
+        capacities[1].disabled = false;
+        capacities[2].disabled = false;
+        capacities[3].disabled = true;
+        break;
+      }
+      if (roomNumbers[i].value === '100') {
+        capacities[0].disabled = true;
+        capacities[1].disabled = true;
+        capacities[2].disabled = true;
+        capacities[3].disabled = false;
+        capacities[3].selected = true;
+      }
+    }
+  }
+};
+
+noticeForm.addEventListener('click', checkTime);
+noticeForm.addEventListener('click', getMinPrice);
+noticeForm.addEventListener('click', checkRoomNumber);
