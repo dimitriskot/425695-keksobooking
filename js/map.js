@@ -119,6 +119,7 @@ var getRandomLocation = function () {
 // получение offer.title
 var getTitle = function (number) {
   var tempTitles = titles.slice();
+
   function compareRandom() {
     return Math.random() - 0.5;
   }
@@ -135,6 +136,7 @@ var getType = function () {
 // получение offer.features
 var getFeatures = function () {
   var features = featuresList.slice();
+
   function compareRandom() {
     return Math.random() - 0.5;
   }
@@ -323,3 +325,93 @@ map.addEventListener('keydown', function (event) {
     openPopup(event);
   }
 });
+
+var timeIn = noticeForm.querySelector('#timein');
+var timeOut = noticeForm.querySelector('#timeout');
+
+// синхронизация времён заезда/выезда
+var timeInSync = function () {
+  var firstTimes = timeIn.children;
+  var secondTimes = timeOut.children;
+  for (var i = 0; i < firstTimes.length; i++) {
+    if (firstTimes[i].selected) {
+      timeOut.value = secondTimes[i].value;
+    }
+  }
+};
+
+// синхронизация времён заезда/выезда
+var timeOutSync = function () {
+  var firstTimes = timeIn.children;
+  var secondTimes = timeOut.children;
+  for (var i = 0; i < secondTimes.length; i++) {
+    if (secondTimes[i].selected) {
+      timeIn.value = firstTimes[i].value;
+    }
+  }
+};
+
+timeIn.addEventListener('change', timeInSync);
+timeOut.addEventListener('change', timeOutSync);
+
+var type = noticeForm.querySelector('#type');
+var price = noticeForm.querySelector('#price');
+
+var minPricesForType = [
+  '1000',
+  '0',
+  '5000',
+  '10000'
+];
+
+// синхронизация типа жилья с минимальной ценой
+var typeSync = function () {
+  var formTypes = type.children;
+  for (var i = 0; i < formTypes.length; i++) {
+    if (formTypes[i].selected) {
+      price.min = minPricesForType[i];
+      price.placeholder = price.min;
+    }
+  }
+};
+
+type.addEventListener('change', typeSync);
+
+var roomNumber = noticeForm.querySelector('#room_number');
+var capacity = noticeForm.querySelector('#capacity');
+
+var roomCapacity = {
+  '1': ['для 1 гостя'],
+  '2': ['для 1 гостя', 'для 2 гостей'],
+  '3': ['для 1 гостя', 'для 2 гостей', 'для 3 гостей'],
+  '100': ['не для гостей']
+};
+
+// очистка capacity
+var clearCapacity = function () {
+  while (capacity.firstChild) {
+    capacity.removeChild(capacity.firstChild);
+  }
+};
+
+// генерация значения для capacity
+var renderCapacity = function (value) {
+  for (var i = 0; i < roomCapacity[value].length; i++) {
+    var capacityItem = document.createElement('option');
+    capacityItem.textContent = roomCapacity[value][i];
+    capacity.appendChild(capacityItem);
+  }
+};
+
+// синхронизация количества комнат с количеством гостей
+var getCapcities = function () {
+  var roomNumbers = roomNumber.children;
+  clearCapacity();
+  for (var i = 0; i < roomNumbers.length; i++) {
+    if (roomNumbers[i].selected) {
+      renderCapacity(roomNumber.value);
+    }
+  }
+};
+
+roomNumber.addEventListener('change', getCapcities);
