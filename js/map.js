@@ -2,7 +2,6 @@
 
 (function () {
   var map = document.querySelector('.map');
-  var noticeForm = document.querySelector('.notice__form');
   var mapPinMain = map.querySelector('.map__pin--main');
   var mapPinSet = map.querySelector('.map__pins');
   var ESC_KEYCODE = 27;
@@ -10,8 +9,8 @@
 
   // создание информации об объявлении
   var createPopup = function (number) {
-    window.util.fragment.appendChild(window.card.renderPopup(window.data.ads[number]));
-    map.appendChild(window.util.fragment);
+    window.constantNode.fragment.appendChild(window.card.renderPopup(window.data.ads[number]));
+    map.appendChild(window.constantNode.fragment);
     // создание события закрытия окна информации по клику и по нажатию на Enter
     var closePopupButton = map.querySelector('.popup__close');
     closePopupButton.addEventListener('click', closeCurrentAd);
@@ -26,15 +25,15 @@
   var createPins = function (array) {
     var pins = [];
     for (var i = 0; i < array.length; i++) {
-      pins[i] = window.util.fragment.appendChild(window.pin.renderMapPin(window.data.ads[i], i));
+      pins[i] = window.constantNode.fragment.appendChild(window.pin.renderMapPin(window.data.ads[i], i));
     }
-    mapPinSet.appendChild(window.util.fragment);
+    mapPinSet.appendChild(window.constantNode.fragment);
   };
 
   // функция активации редактора объявления
   var activateEdit = function () {
     map.classList.remove('map--faded');
-    noticeForm.classList.remove('notice__form--disabled');
+    window.constantNode.noticeForm.classList.remove('notice__form--disabled');
     createPins(window.data.ads);
     mapPinMain.removeEventListener('mouseup', activateEdit);
     mapPinMain.addEventListener('mousedown', dragPinMain);
@@ -111,6 +110,7 @@
 
   var dragPinMain = function (event) {
     event.preventDefault();
+    var pinCoords;
     var startCoords = {
       x: event.clientX,
       y: event.clientY
@@ -125,14 +125,23 @@
         x: moveEvent.clientX,
         y: moveEvent.clientY
       };
+      if (mapPinMain.offsetTop - shift.y < 100) {
+        mapPinMain.style.top = 100 + 'px';
+      } else if (mapPinMain.offsetTop - shift.y > 500) {
+        mapPinMain.style.top = 500 + 'px';
+      }
       mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
       mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+      pinCoords = {
+        x: mapPinMain.offsetLeft - shift.x,
+        y: mapPinMain.offsetTop - shift.y
+      };
     };
     var onMouseUp = function (upEvent) {
       upEvent.preventDefault();
       map.removeEventListener('mousemove', onMouseMove);
       map.removeEventListener('mouseup', onMouseUp);
-      window.form.getFormAddress(startCoords);
+      window.form.getFormAddress(pinCoords);
     };
     map.addEventListener('mousemove', onMouseMove);
     map.addEventListener('mouseup', onMouseUp);
