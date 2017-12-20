@@ -26,7 +26,6 @@
   };
 
   window.util = {
-    fragment: document.createDocumentFragment(),
     getRandomElement: getRandomElement,
     getRandomArrayLength: getRandomArrayLength,
     getRandomNumber: getRandomNumber,
