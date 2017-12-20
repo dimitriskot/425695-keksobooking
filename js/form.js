@@ -72,7 +72,7 @@
   };
 
   // синхронизация количества комнат с количеством гостей
-  var getCapcities = function () {
+  var getCapacities = function () {
     var roomNumbers = roomNumber.children;
     clearCapacity();
     for (var i = 0; i < roomNumbers.length; i++) {
@@ -85,5 +85,5 @@
   timeIn.addEventListener('change', timeInSync);
   timeOut.addEventListener('change', timeOutSync);
   type.addEventListener('change', typeSync);
-  roomNumber.addEventListener('change', getCapcities);
+  roomNumber.addEventListener('change', getCapacities);
 })();
