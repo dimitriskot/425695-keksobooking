@@ -26,9 +26,6 @@
   };
 
   window.util = {
-    fragment: document.createDocumentFragment(),
-    map: document.querySelector('.map'),
-    noticeForm: document.querySelector('.notice__form'),
     getRandomElement: getRandomElement,
     getRandomArrayLength: getRandomArrayLength,
     getRandomNumber: getRandomNumber,
