@@ -7,6 +7,8 @@
   var price = window.constantNode.noticeForm.querySelector('#price');
   var roomNumber = window.constantNode.noticeForm.querySelector('#room_number');
   var capacity = window.constantNode.noticeForm.querySelector('#capacity');
+  var MAIN_PIN_HALF_WIDTH = 31;
+  var MAIN_PIN_HEIGHT = 82;
 
   var minPricesForType = [
     '1000',
@@ -86,4 +88,15 @@
   timeOut.addEventListener('change', timeOutSync);
   type.addEventListener('change', typeSync);
   roomNumber.addEventListener('change', getCapacities);
+
+  var getFormAddress = function (coords) {
+    var formAddress = window.constantNode.noticeForm.querySelector('#address');
+    var pinX = coords.x + MAIN_PIN_HALF_WIDTH;
+    var pinY = coords.y + MAIN_PIN_HEIGHT;
+    formAddress.value = pinX + ', ' + pinY;
+  };
+
+  window.form = {
+    getFormAddress: getFormAddress
+  };
 })();
