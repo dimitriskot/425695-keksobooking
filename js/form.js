@@ -49,6 +49,7 @@
   // объявление обработчика синхронизации времени выезада со временем заезда
   // и присваивание ему значения функции window.synchronizeFields с параметрами
   var timeInSync = window.synchronizeFields(timeOut, firstTimes, secondTimes, syncElement);
+  console.log(timeInSync);
   // объявление обработчика синхронизации времени заезда со временем выезада
   // и присваивание ему значения функции window.synchronizeFields с нужными параметрами
   var timeOutSync = window.synchronizeFields(timeIn, secondTimes, firstTimes, syncElement);
