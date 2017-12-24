@@ -48,14 +48,19 @@
   };
   // объявление обработчика синхронизации времени выезада со временем заезда
   // и присваивание ему значения функции window.synchronizeFields с параметрами
-  var timeInSync = window.synchronizeFields(timeOut, firstTimes, secondTimes, syncElement);
-  console.log(timeInSync);
+  var timeInSync = function () {
+    window.synchronizeFields(timeOut, firstTimes, secondTimes, syncElement);
+  };
   // объявление обработчика синхронизации времени заезда со временем выезада
   // и присваивание ему значения функции window.synchronizeFields с нужными параметрами
-  var timeOutSync = window.synchronizeFields(timeIn, secondTimes, firstTimes, syncElement);
+  var timeOutSync = function () {
+    window.synchronizeFields(timeIn, secondTimes, firstTimes, syncElement);
+  };
   // объявление обработчика синхронизации цены жилья с типом жилья
   // и присваивание ему значения функции window.synchronizeFields с нужными параметрами
-  var typeSync = window.synchronizeFields(price, formTypes, minPricesForType, syncMinPrice);
+  var typeSync = function () {
+    window.synchronizeFields(price, formTypes, minPricesForType, syncMinPrice);
+  };
 
   timeIn.addEventListener('change', timeInSync);
   timeOut.addEventListener('change', timeOutSync);
