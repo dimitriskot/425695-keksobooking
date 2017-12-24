@@ -25,6 +25,7 @@
 
   var roomNumber = window.constants.noticeForm.querySelector('#room_number');
   var capacity = window.constants.noticeForm.querySelector('#capacity');
+  var formAddress = window.constants.noticeForm.querySelector('#address');
   var MAIN_PIN_HALF_WIDTH = 31;
   var MAIN_PIN_HEIGHT = 82;
 
@@ -51,6 +52,8 @@
   var timeInSync = function () {
     window.synchronizeFields(timeOut, firstTimes, secondTimes, syncElement);
   };
+
+  timeInSync();
   // объявление обработчика синхронизации времени заезда со временем выезада
   // и присваивание ему значения функции window.synchronizeFields с нужными параметрами
   var timeOutSync = function () {
@@ -61,6 +64,8 @@
   var typeSync = function () {
     window.synchronizeFields(price, formTypes, minPricesForType, syncMinPrice);
   };
+
+  typeSync();
 
   timeIn.addEventListener('change', timeInSync);
   timeOut.addEventListener('change', timeOutSync);
@@ -127,13 +132,14 @@
     }
   };
 
+  getCapacities();
+
   // timeIn.addEventListener('change', timeInSync);
   // timeOut.addEventListener('change', timeOutSync);
   // type.addEventListener('change', typeSync);
   roomNumber.addEventListener('change', getCapacities);
 
   var getFormAddress = function (coords) {
-    var formAddress = window.constants.noticeForm.querySelector('#address');
     var pinX = coords.x + MAIN_PIN_HALF_WIDTH;
     var pinY = coords.y + MAIN_PIN_HEIGHT;
     formAddress.value = pinX + ', ' + pinY;

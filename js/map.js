@@ -3,11 +3,17 @@
 (function () {
   var mapPinMain = window.constants.map.querySelector('.map__pin--main');
 
+
   // функция активации редактора объявления
   var activateEdit = function () {
     window.constants.map.classList.remove('map--faded');
     window.constants.noticeForm.classList.remove('notice__form--disabled');
     window.pin.createPins(window.data.ads);
+    var defaultCoords = {
+      x: mapPinMain.offsetTop,
+      y: mapPinMain.offsetLeft
+    };
+    window.form.getFormAddress(defaultCoords);
     mapPinMain.removeEventListener('mouseup', activateEdit);
     mapPinMain.addEventListener('mousedown', dragPinMain);
   };
