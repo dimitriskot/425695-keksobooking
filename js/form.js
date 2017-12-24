@@ -41,8 +41,6 @@
     window.synchronizeFields(timeOut, firstTimes, secondTimes, syncElement);
   };
 
-  timeInSync();
-
   var timeOutSync = function () {
     window.synchronizeFields(timeIn, secondTimes, firstTimes, syncElement);
   };
@@ -51,7 +49,6 @@
     window.synchronizeFields(price, formTypes, minPricesForType, syncMinPrice);
   };
 
-  typeSync();
 
   // очистка capacity
   var clearCapacity = function () {
@@ -85,7 +82,13 @@
     }
   };
 
-  getCapacities();
+  var syncForm = function () {
+    timeInSync();
+    typeSync();
+    getCapacities();
+  };
+
+  syncForm();
 
   timeIn.addEventListener('change', timeInSync);
   timeOut.addEventListener('change', timeOutSync);
@@ -100,7 +103,11 @@
 
   var resetForm = function () {
     window.constants.noticeForm.reset();
+    syncForm();
     window.util.formHandler('Данные успешно отправлены!');
+    getFormAddress(window.constants.PIN_COORDS);
+    window.constants.mapPinMain.style.left = window.constants.PIN_COORDS.x + 'px';
+    window.constants.mapPinMain.style.top = window.constants.PIN_COORDS.y + 'px';
   };
 
   window.constants.noticeForm.addEventListener('submit', function (event) {
