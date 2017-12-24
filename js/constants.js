@@ -6,6 +6,7 @@
     noticeForm: document.querySelector('.notice__form'),
     fragment: document.createDocumentFragment(),
     ESC_KEYCODE: 27,
-    ENTER_KEYCODE: 13
+    ENTER_KEYCODE: 13,
+    ADS_COUNT: 8
   };
 })();

@@ -65,6 +65,11 @@
     for (var i = 0; i < roomCapacity[value].length; i++) {
       var capacityItem = document.createElement('option');
       capacityItem.textContent = roomCapacity[value][i];
+      if (value === '100') {
+        capacityItem.value = i;
+      } else {
+        capacityItem.value = i + 1;
+      }
       capacity.appendChild(capacityItem);
     }
   };
@@ -80,6 +85,8 @@
     }
   };
 
+  getCapacities();
+
   timeIn.addEventListener('change', timeInSync);
   timeOut.addEventListener('change', timeOutSync);
   type.addEventListener('change', typeSync);
@@ -93,11 +100,12 @@
 
   var resetForm = function () {
     window.constants.noticeForm.reset();
+    window.util.formHandler('Данные успешно отправлены!');
   };
 
   window.constants.noticeForm.addEventListener('submit', function (event) {
     event.preventDefault();
-    window.upload(new FormData(window.constants.noticeForm), resetForm, window.util.errorHandler);
+    window.upload(new FormData(window.constants.noticeForm), resetForm, window.util.formHandler);
   });
 
   window.form = {
