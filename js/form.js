@@ -1,21 +1,33 @@
 'use strict';
 
 (function () {
-  var timeIn = window.constantNode.noticeForm.querySelector('#timein');
-  var timeOut = window.constantNode.noticeForm.querySelector('#timeout');
-  var type = window.constantNode.noticeForm.querySelector('#type');
-  var price = window.constantNode.noticeForm.querySelector('#price');
-  var roomNumber = window.constantNode.noticeForm.querySelector('#room_number');
-  var capacity = window.constantNode.noticeForm.querySelector('#capacity');
-  var MAIN_PIN_HALF_WIDTH = 31;
-  var MAIN_PIN_HEIGHT = 82;
-
+  // первая форма (время заезда)
+  var timeIn = window.constants.noticeForm.querySelector('#timein');
+  // вторая форма (время выезда)
+  var timeOut = window.constants.noticeForm.querySelector('#timeout');
+  // массив значений первой формы (время заезда)
+  var firstTimes = timeIn.children;
+  // массив значений второй формы (время выезда)
+  var secondTimes = timeOut.children;
+  // первая форма (тип жилья)
+  var type = window.constants.noticeForm.querySelector('#type');
+  // вторая форма (цена жилья)
+  var price = window.constants.noticeForm.querySelector('#price');
+  // массив значений первой формы (тип жилья)
+  var formTypes = type.children;
+  // массив значений второй формы (цена жилья)
   var minPricesForType = [
     '1000',
     '0',
     '5000',
     '10000'
   ];
+
+  var roomNumber = window.constants.noticeForm.querySelector('#room_number');
+  var capacity = window.constants.noticeForm.querySelector('#capacity');
+  var formAddress = window.constants.noticeForm.querySelector('#address');
+  var MAIN_PIN_HALF_WIDTH = 31;
+  var MAIN_PIN_HEIGHT = 82;
 
   var roomCapacity = {
     '1': ['для 1 гостя'],
@@ -24,39 +36,75 @@
     '100': ['не для гостей']
   };
 
-  // синхронизация времён заезда/выезда
+  // функция-колбэк присваивания передаваемой форме (element)
+  // значения передаваемого элемента (item) (для времён заезда/выезда)
+  var syncElement = function (element, item) {
+    element.value = item.value;
+  };
+  // функция-колбэк присваивания передаваемой форме (element)
+  // значения передаваемого элемента (item) (для цены жилья)
+  var syncMinPrice = function (element, item) {
+    element.min = item;
+    element.placeholder = element.min;
+  };
+  // объявление обработчика синхронизации времени выезада со временем заезда
+  // и присваивание ему значения функции window.synchronizeFields с параметрами
   var timeInSync = function () {
-    var firstTimes = timeIn.children;
-    var secondTimes = timeOut.children;
-    for (var i = 0; i < firstTimes.length; i++) {
-      if (firstTimes[i].selected) {
-        timeOut.value = secondTimes[i].value;
-      }
-    }
+    window.synchronizeFields(timeOut, firstTimes, secondTimes, syncElement);
   };
 
-  // синхронизация времён заезда/выезда
+  timeInSync();
+  // объявление обработчика синхронизации времени заезда со временем выезада
+  // и присваивание ему значения функции window.synchronizeFields с нужными параметрами
   var timeOutSync = function () {
-    var firstTimes = timeIn.children;
-    var secondTimes = timeOut.children;
-    for (var i = 0; i < secondTimes.length; i++) {
-      if (secondTimes[i].selected) {
-        timeIn.value = firstTimes[i].value;
-      }
-    }
+    window.synchronizeFields(timeIn, secondTimes, firstTimes, syncElement);
   };
-
-  // синхронизация типа жилья с минимальной ценой
+  // объявление обработчика синхронизации цены жилья с типом жилья
+  // и присваивание ему значения функции window.synchronizeFields с нужными параметрами
   var typeSync = function () {
-    var formTypes = type.children;
-    for (var i = 0; i < formTypes.length; i++) {
-      if (formTypes[i].selected) {
-        price.min = minPricesForType[i];
-        price.placeholder = price.min;
-      }
-    }
+    window.synchronizeFields(price, formTypes, minPricesForType, syncMinPrice);
   };
 
+  typeSync();
+
+  timeIn.addEventListener('change', timeInSync);
+  timeOut.addEventListener('change', timeOutSync);
+  type.addEventListener('change', typeSync);
+
+  /* КАК БЫЛО
+    // синхронизация времён заезда/выезда
+    var timeInSync = function () {
+      var firstTimes = timeIn.children;
+      var secondTimes = timeOut.children;
+      for (var i = 0; i < firstTimes.length; i++) {
+        if (firstTimes[i].selected) {
+          timeOut.value = secondTimes[i].value;
+        }
+      }
+    };
+
+    // синхронизация времён заезда/выезда
+    var timeOutSync = function () {
+      var firstTimes = timeIn.children;
+      var secondTimes = timeOut.children;
+      for (var i = 0; i < secondTimes.length; i++) {
+        if (secondTimes[i].selected) {
+          timeIn.value = firstTimes[i].value;
+        }
+      }
+    };
+
+    // синхронизация типа жилья с минимальной ценой
+    var typeSync = function () {
+      var formTypes = type.children;
+      for (var i = 0; i < formTypes.length; i++) {
+        if (formTypes[i].selected) {
+          price.min = minPricesForType[i];
+          price.placeholder = price.min;
+        }
+      }
+    };
+  */
   // очистка capacity
   var clearCapacity = function () {
     while (capacity.firstChild) {
@@ -84,13 +132,14 @@
     }
   };
 
-  timeIn.addEventListener('change', timeInSync);
-  timeOut.addEventListener('change', timeOutSync);
-  type.addEventListener('change', typeSync);
+  getCapacities();
+
+  // timeIn.addEventListener('change', timeInSync);
+  // timeOut.addEventListener('change', timeOutSync);
+  // type.addEventListener('change', typeSync);
   roomNumber.addEventListener('change', getCapacities);
 
   var getFormAddress = function (coords) {
-    var formAddress = window.constantNode.noticeForm.querySelector('#address');
     var pinX = coords.x + MAIN_PIN_HALF_WIDTH;
     var pinY = coords.y + MAIN_PIN_HEIGHT;
     formAddress.value = pinX + ', ' + pinY;

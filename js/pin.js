@@ -2,6 +2,7 @@
 
 (function () {
   var mapPinTemplate = document.querySelector('template').content.querySelector('.map__pin');
+  var mapPinSet = window.constants.map.querySelector('.map__pins');
 
   // генерация метки
   var renderMapPin = function (ad, number) {
@@ -13,7 +14,16 @@
     return mapPinElement;
   };
 
+  // создание меток объявлений
+  var createPins = function (array) {
+    var pins = [];
+    for (var i = 0; i < array.length; i++) {
+      pins[i] = window.constants.fragment.appendChild(renderMapPin(window.data.ads[i], i));
+    }
+    mapPinSet.appendChild(window.constants.fragment);
+  };
+
   window.pin = {
-    renderMapPin: renderMapPin
+    createPins: createPins
   };
 })();

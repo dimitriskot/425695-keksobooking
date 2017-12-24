@@ -32,8 +32,8 @@
       var item = document.createElement('li');
       item.className = 'feature';
       item.classList.add('feature--' + adNumber.offer.features[j]);
-      window.constantNode.fragment.appendChild(item);
-      article.querySelector('.popup__features').appendChild(window.constantNode.fragment);
+      window.constants.fragment.appendChild(item);
+      article.querySelector('.popup__features').appendChild(window.constants.fragment);
     }
     article.querySelector('.popup__description').textContent = adNumber.offer.description;
     article.querySelector('.popup__avatar').src = adNumber.author.avatar;
