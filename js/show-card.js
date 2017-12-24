@@ -2,8 +2,8 @@
 
 (function () {
   // создание информации об объявлении
-  var createPopup = function (number) {
-    window.constants.fragment.appendChild(window.card.renderPopup(window.data.ads[number]));
+  var createPopup = function (array, number) {
+    window.constants.fragment.appendChild(window.card.renderPopup(array[number]));
     window.constants.map.appendChild(window.constants.fragment);
     // создание события закрытия окна информации по клику и по нажатию на Enter
     var closePopupButton = window.constants.map.querySelector('.popup__close');
@@ -57,7 +57,7 @@
         deactivatePin();
         target.classList.add('map__pin--active');
         pinId = target.id.replace('pin-', '');
-        createPopup(pinId, event);
+        window.load(createPopup, pinId);
         return;
       }
       target = target.parentNode;

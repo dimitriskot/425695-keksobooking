@@ -17,8 +17,8 @@
   // создание меток объявлений
   var createPins = function (array) {
     var pins = [];
-    for (var i = 0; i < array.length; i++) {
-      pins[i] = window.constants.fragment.appendChild(renderMapPin(window.data.ads[i], i));
+    for (var i = 0; i < 8; i++) {
+      pins[i] = window.constants.fragment.appendChild(renderMapPin(array[i], i));
     }
     mapPinSet.appendChild(window.constants.fragment);
   };

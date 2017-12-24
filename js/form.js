@@ -1,33 +1,25 @@
 'use strict';
 
 (function () {
-  // первая форма (время заезда)
   var timeIn = window.constants.noticeForm.querySelector('#timein');
-  // вторая форма (время выезда)
   var timeOut = window.constants.noticeForm.querySelector('#timeout');
-  // массив значений первой формы (время заезда)
   var firstTimes = timeIn.children;
-  // массив значений второй формы (время выезда)
   var secondTimes = timeOut.children;
-  // первая форма (тип жилья)
   var type = window.constants.noticeForm.querySelector('#type');
-  // вторая форма (цена жилья)
   var price = window.constants.noticeForm.querySelector('#price');
-  // массив значений первой формы (тип жилья)
   var formTypes = type.children;
-  // массив значений второй формы (цена жилья)
+  var roomNumber = window.constants.noticeForm.querySelector('#room_number');
+  var capacity = window.constants.noticeForm.querySelector('#capacity');
+  var formAddress = window.constants.noticeForm.querySelector('#address');
+  var MAIN_PIN_HALF_WIDTH = 31;
+  var MAIN_PIN_HEIGHT = 82;
+
   var minPricesForType = [
     '1000',
     '0',
     '5000',
     '10000'
   ];
-
-  var roomNumber = window.constants.noticeForm.querySelector('#room_number');
-  var capacity = window.constants.noticeForm.querySelector('#capacity');
-  var formAddress = window.constants.noticeForm.querySelector('#address');
-  var MAIN_PIN_HALF_WIDTH = 31;
-  var MAIN_PIN_HEIGHT = 82;
 
   var roomCapacity = {
     '1': ['для 1 гостя'],
@@ -36,75 +28,31 @@
     '100': ['не для гостей']
   };
 
-  // функция-колбэк присваивания передаваемой форме (element)
-  // значения передаваемого элемента (item) (для времён заезда/выезда)
   var syncElement = function (element, item) {
     element.value = item.value;
   };
-  // функция-колбэк присваивания передаваемой форме (element)
-  // значения передаваемого элемента (item) (для цены жилья)
+
   var syncMinPrice = function (element, item) {
     element.min = item;
     element.placeholder = element.min;
   };
-  // объявление обработчика синхронизации времени выезада со временем заезда
-  // и присваивание ему значения функции window.synchronizeFields с параметрами
+
   var timeInSync = function () {
     window.synchronizeFields(timeOut, firstTimes, secondTimes, syncElement);
   };
 
   timeInSync();
-  // объявление обработчика синхронизации времени заезда со временем выезада
-  // и присваивание ему значения функции window.synchronizeFields с нужными параметрами
+
   var timeOutSync = function () {
     window.synchronizeFields(timeIn, secondTimes, firstTimes, syncElement);
   };
-  // объявление обработчика синхронизации цены жилья с типом жилья
-  // и присваивание ему значения функции window.synchronizeFields с нужными параметрами
+
   var typeSync = function () {
     window.synchronizeFields(price, formTypes, minPricesForType, syncMinPrice);
   };
 
   typeSync();
 
-  timeIn.addEventListener('change', timeInSync);
-  timeOut.addEventListener('change', timeOutSync);
-  type.addEventListener('change', typeSync);
-
-  /* КАК БЫЛО
-    // синхронизация времён заезда/выезда
-    var timeInSync = function () {
-      var firstTimes = timeIn.children;
-      var secondTimes = timeOut.children;
-      for (var i = 0; i < firstTimes.length; i++) {
-        if (firstTimes[i].selected) {
-          timeOut.value = secondTimes[i].value;
-        }
-      }
-    };
-
-    // синхронизация времён заезда/выезда
-    var timeOutSync = function () {
-      var firstTimes = timeIn.children;
-      var secondTimes = timeOut.children;
-      for (var i = 0; i < secondTimes.length; i++) {
-        if (secondTimes[i].selected) {
-          timeIn.value = firstTimes[i].value;
-        }
-      }
-    };
-
-    // синхронизация типа жилья с минимальной ценой
-    var typeSync = function () {
-      var formTypes = type.children;
-      for (var i = 0; i < formTypes.length; i++) {
-        if (formTypes[i].selected) {
-          price.min = minPricesForType[i];
-          price.placeholder = price.min;
-        }
-      }
-    };
-  */
   // очистка capacity
   var clearCapacity = function () {
     while (capacity.firstChild) {
@@ -132,11 +80,9 @@
     }
   };
 
-  getCapacities();
-
-  // timeIn.addEventListener('change', timeInSync);
-  // timeOut.addEventListener('change', timeOutSync);
-  // type.addEventListener('change', typeSync);
+  timeIn.addEventListener('change', timeInSync);
+  timeOut.addEventListener('change', timeOutSync);
+  type.addEventListener('change', typeSync);
   roomNumber.addEventListener('change', getCapacities);
 
   var getFormAddress = function (coords) {
@@ -144,6 +90,15 @@
     var pinY = coords.y + MAIN_PIN_HEIGHT;
     formAddress.value = pinX + ', ' + pinY;
   };
+
+  var resetForm = function () {
+    window.constants.noticeForm.reset();
+  };
+
+  window.constants.noticeForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    window.upload(new FormData(window.constants.noticeForm), resetForm, window.util.errorHandler);
+  });
 
   window.form = {
     getFormAddress: getFormAddress
