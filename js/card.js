@@ -19,6 +19,7 @@
 
   // генерация информации об объявлении
   var renderPopup = function (adNumber) {
+    clearFeatures();
     var article = articleTemplate.cloneNode(true);
     article.querySelector('h3').textContent = adNumber.offer.title;
     article.querySelector('small').textContent = adNumber.offer.address;
@@ -27,12 +28,11 @@
     var typeInfo = adNumber.offer.rooms + ' для ' + adNumber.offer.guests;
     article.querySelector('.popup__type-info').textContent = (adNumber.offer.guests === 1) ? typeInfo + ' гостя' : typeInfo + ' гостей';
     article.querySelector('.popup__check').textContent = 'Заезд после ' + adNumber.offer.checkin + ', выезд до ' + adNumber.offer.checkout;
-    clearFeatures();
-    for (var j = 0; j < adNumber.offer.features.length; j++) {
-      var item = document.createElement('li');
-      item.className = 'feature';
-      item.classList.add('feature--' + adNumber.offer.features[j]);
-      window.constants.fragment.appendChild(item);
+    for (var i = 0; i < adNumber.offer.features.length; i++) {
+      var featureItem = document.createElement('li');
+      featureItem.className = 'feature';
+      featureItem.classList.add('feature--' + adNumber.offer.features[i]);
+      window.constants.fragment.appendChild(featureItem);
       article.querySelector('.popup__features').appendChild(window.constants.fragment);
     }
     article.querySelector('.popup__description').textContent = adNumber.offer.description;

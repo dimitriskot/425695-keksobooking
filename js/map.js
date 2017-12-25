@@ -1,28 +1,28 @@
 'use strict';
 
 (function () {
-  var mapPinMain = window.constants.map.querySelector('.map__pin--main');
 
 
   // функция активации редактора объявления
   var activateEdit = function () {
     window.constants.map.classList.remove('map--faded');
     window.constants.noticeForm.classList.remove('notice__form--disabled');
-    window.pin.createPins(window.data.ads);
+    window.load(window.pin.createPins, window.util.formHandler);
     var defaultCoords = {
-      x: mapPinMain.offsetTop,
-      y: mapPinMain.offsetLeft
+      x: window.constants.mapPinMain.offsetLeft,
+      y: window.constants.mapPinMain.offsetTop
     };
+    window.constants.PIN_COORDS = defaultCoords;
     window.form.getFormAddress(defaultCoords);
-    mapPinMain.removeEventListener('mouseup', activateEdit);
-    mapPinMain.addEventListener('mousedown', dragPinMain);
+    window.constants.mapPinMain.removeEventListener('mouseup', activateEdit);
+    window.constants.mapPinMain.addEventListener('mousedown', dragPinMain);
   };
 
   // событие активации редактора объявления по клику
-  mapPinMain.addEventListener('mouseup', activateEdit);
+  window.constants.mapPinMain.addEventListener('mouseup', activateEdit);
 
   // событие активации редактора объявления по нажатию Enter
-  mapPinMain.addEventListener('keydown', function (event) {
+  window.constants.mapPinMain.addEventListener('keydown', function (event) {
     if (event.keyCode === window.constants.ENTER_KEYCODE) {
       activateEdit();
     }
@@ -55,16 +55,16 @@
         x: moveEvent.clientX,
         y: moveEvent.clientY
       };
-      if (mapPinMain.offsetTop - shift.y < 125) {
-        mapPinMain.style.top = 125 + 'px';
-      } else if (mapPinMain.offsetTop - shift.y > 650) {
-        mapPinMain.style.top = 650 + 'px';
+      if (window.constants.mapPinMain.offsetTop - shift.y < window.constants.MIN_PIN_COORD) {
+        window.constants.mapPinMain.style.top = window.constants.MIN_PIN_COORD + 'px';
+      } else if (window.constants.mapPinMain.offsetTop - shift.y > window.constants.MAX_PIN_COORD) {
+        window.constants.mapPinMain.style.top = window.constants.MAX_PIN_COORD + 'px';
       }
-      mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
-      mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+      window.constants.mapPinMain.style.top = (window.constants.mapPinMain.offsetTop - shift.y) + 'px';
+      window.constants.mapPinMain.style.left = (window.constants.mapPinMain.offsetLeft - shift.x) + 'px';
       pinCoords = {
-        x: mapPinMain.offsetLeft - shift.x,
-        y: mapPinMain.offsetTop - shift.y
+        x: window.constants.mapPinMain.offsetLeft - shift.x,
+        y: window.constants.mapPinMain.offsetTop - shift.y
       };
     };
     var onMouseUp = function (upEvent) {

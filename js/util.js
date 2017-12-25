@@ -25,10 +25,26 @@
     return number;
   };
 
+  var formHandler = function (message) {
+    var formPopup = document.createElement('div');
+    formPopup.classList.add('form-popup');
+    formPopup.textContent = message;
+    document.body.insertAdjacentElement('afterbegin', formPopup);
+    var formButton = document.createElement('button');
+    formButton.classList.add('form-popup__button');
+    formButton.textContent = 'OK';
+    var closePopup = function () {
+      document.body.removeChild(formPopup);
+    };
+    formButton.addEventListener('click', closePopup);
+    formPopup.appendChild(formButton);
+  };
+
   window.util = {
     getRandomElement: getRandomElement,
     getRandomArrayLength: getRandomArrayLength,
     getRandomNumber: getRandomNumber,
-    getRandomNumberFromRange: getRandomNumberFromRange
+    getRandomNumberFromRange: getRandomNumberFromRange,
+    formHandler: formHandler
   };
 })();
