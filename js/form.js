@@ -22,10 +22,21 @@
   ];
 
   var roomCapacity = {
-    '1': ['для 1 гостя'],
-    '2': ['для 1 гостя', 'для 2 гостей'],
-    '3': ['для 1 гостя', 'для 2 гостей', 'для 3 гостей'],
-    '100': ['не для гостей']
+    '1': [
+      {value: 1, text: 'для 1 гостя'}
+    ],
+    '2': [
+      {value: 1, text: 'для 1 гостя'},
+      {value: 2, text: 'для 2 гостей'}
+    ],
+    '3': [
+      {value: 1, text: 'для 1 гостя'},
+      {value: 2, text: 'для 2 гостей'},
+      {value: 3, text: 'для 3 гостей'}
+    ],
+    '100': [
+      {value: 0, text: 'не для гостей'}
+    ]
   };
 
   var syncElement = function (element, item) {
@@ -61,12 +72,8 @@
   var renderCapacity = function (value) {
     for (var i = 0; i < roomCapacity[value].length; i++) {
       var capacityItem = document.createElement('option');
-      capacityItem.textContent = roomCapacity[value][i];
-      if (value === '100') {
-        capacityItem.value = i;
-      } else {
-        capacityItem.value = i + 1;
-      }
+      capacityItem.textContent = roomCapacity[value][i].text;
+      capacityItem.value = roomCapacity[value][i].value;
       capacity.appendChild(capacityItem);
     }
   };

@@ -55,10 +55,10 @@
         x: moveEvent.clientX,
         y: moveEvent.clientY
       };
-      if (window.constants.mapPinMain.offsetTop - shift.y < 125) {
-        window.constants.mapPinMain.style.top = 125 + 'px';
-      } else if (window.constants.mapPinMain.offsetTop - shift.y > 650) {
-        window.constants.mapPinMain.style.top = 650 + 'px';
+      if (window.constants.mapPinMain.offsetTop - shift.y < window.constants.MIN_PIN_COORD) {
+        window.constants.mapPinMain.style.top = window.constants.MIN_PIN_COORD + 'px';
+      } else if (window.constants.mapPinMain.offsetTop - shift.y > window.constants.MAX_PIN_COORD) {
+        window.constants.mapPinMain.style.top = window.constants.MAX_PIN_COORD + 'px';
       }
       window.constants.mapPinMain.style.top = (window.constants.mapPinMain.offsetTop - shift.y) + 'px';
       window.constants.mapPinMain.style.left = (window.constants.mapPinMain.offsetLeft - shift.x) + 'px';

@@ -57,7 +57,7 @@
         deactivatePin();
         target.classList.add('map__pin--active');
         pinId = target.id.replace('pin-', '');
-        window.load(createPopup, pinId);
+        window.load(createPopup, window.util.formHandler, pinId);
         return;
       }
       target = target.parentNode;

@@ -15,10 +15,10 @@
   };
 
   // создание меток объявлений
-  var createPins = function (array) {
+  var createPins = function (collection) {
     var pins = [];
     for (var i = 0; i < window.constants.ADS_COUNT; i++) {
-      pins[i] = window.constants.fragment.appendChild(renderMapPin(array[i], i));
+      pins[i] = window.constants.fragment.appendChild(renderMapPin(collection[i], i));
     }
     mapPinSet.appendChild(window.constants.fragment);
   };
