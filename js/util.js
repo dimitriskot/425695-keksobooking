@@ -40,11 +40,22 @@
     formPopup.appendChild(formButton);
   };
 
+  var debounce = function (debouncedFunction) {
+    var lastTimeout;
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
+    }
+    lastTimeout = window.setTimeout(function () {
+      debouncedFunction();
+    }, 1000);
+  };
+
   window.util = {
     getRandomElement: getRandomElement,
     getRandomArrayLength: getRandomArrayLength,
     getRandomNumber: getRandomNumber,
     getRandomNumberFromRange: getRandomNumberFromRange,
-    formHandler: formHandler
+    formHandler: formHandler,
+    debounce: debounce
   };
 })();

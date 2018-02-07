@@ -13,17 +13,36 @@
     mapPinElement.querySelector('img').src = ad.author.avatar;
     return mapPinElement;
   };
+  /*
+    // создание меток объявлений
+    var createPins = function (collection) {
+      var pins = [];
+      for (var i = 0; i < window.constants.ADS_COUNT; i++) {
+        pins[i] = window.constants.fragment.appendChild(renderMapPin(collection[i], collection.indexOf(collection[i])));
+      }
+      mapPinSet.appendChild(window.constants.fragment);
+    };
+  */
 
   // создание меток объявлений
   var createPins = function (collection) {
-    var pins = [];
-    for (var i = 0; i < window.constants.ADS_COUNT; i++) {
-      pins[i] = window.constants.fragment.appendChild(renderMapPin(collection[i], i));
-    }
-    mapPinSet.appendChild(window.constants.fragment);
+    var pins = collection.slice(0, window.constants.ADS_COUNT);
+    pins.forEach(function (pin) {
+      window.constants.fragment.appendChild(renderMapPin(pin, collection.indexOf(pin)));
+      mapPinSet.appendChild(window.constants.fragment);
+    });
+  };
+
+  var removePins = function () {
+    var pinsOnMap = mapPinSet.querySelectorAll('.map__pin:not(.map__pin--main)');
+    pinsOnMap.forEach(function (pin) {
+      mapPinSet.removeChild(pin);
+    });
   };
 
   window.pin = {
-    createPins: createPins
+    renderMapPin: renderMapPin,
+    createPins: createPins,
+    removePins: removePins,
   };
 })();

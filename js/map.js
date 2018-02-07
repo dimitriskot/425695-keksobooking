@@ -7,7 +7,7 @@
   var activateEdit = function () {
     window.constants.map.classList.remove('map--faded');
     window.constants.noticeForm.classList.remove('notice__form--disabled');
-    window.load(window.pin.createPins, window.util.formHandler);
+    window.load(window.filter.loadAds, window.util.formHandler);
     var defaultCoords = {
       x: window.constants.mapPinMain.offsetLeft,
       y: window.constants.mapPinMain.offsetTop
